@@ -3,13 +3,12 @@ package com.mattos.exercise.web;
 import com.mattos.exercise.domain.Order;
 import com.mattos.exercise.repository.OrderMongoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-@Controller
+@RestController
 @RequestMapping(path = "/orders")
 public class OrderController {
 
@@ -18,13 +17,13 @@ public class OrderController {
 
     @PostMapping()
     public @ResponseBody
-    Mono<Order> addKayak(@RequestBody Order kayak) {
+    Mono<Order> addOrder(@RequestBody Order kayak) {
         return orderRepository.save(kayak);
     }
 
     @GetMapping()
     public @ResponseBody
-    Flux<Order> getAllKayaks() {
+    Flux<Order> getAllOrders() {
         Flux<Order> result = orderRepository.findAll();
         return result;
     }

@@ -2,104 +2,47 @@
 This repository is dedicated to exercise to implement an application that consumes transactional data in form of Json from a stream and agregate result ( different averages ) and present real time results.
 
 
-# Problem Statement
-In this example, we can assume there is a source of data for Wawa orders coming from our stores.  The goal of the exercise it to consume a stream of event data in the JSON format, each JSON document should be considered mutually exclusive from the others.  The data will come in very quickly, in the order of millions of events per day.  The outcome would be a moving average of the item cost by category as well as the average reward of each category.
+### Problem Statement
+The problem used as use case for this exercise can be found [here](/Problem-Statement.md)
 
-A few key notes:
+### Design considerations:
+To come up with the design of this solution, I used some ground principles. It also took in consideration the problem statement NFR's.
 
-·         The order data contains details about the sale as well as a rewards scheme associate with the sale.
+1) To deal with the given capacity of millions of records per day, I chose an reactive base architecture, using some well known patterns and libraries included in Spring Framework.
+2) As it was asked for a closest to production as possible, and aiming to deliver high quality user experience, we must case about the system's responsiveness and resiliency ( ability to respond under failure ).
+3) As one of the reactive patterns, I chose the streaming architectural technique, due to the characteristic of low latency and high throughput, achieved using the isolation principle together with the data pipeline.
+4) To make it truly reactive design, I used the SSE for the UI
+5) I chose to use Spring WebFlux + Kafka + MongoDB as base and leverage lots of Spring Cloud features to be "cloud agnostic". 
+6) I also deployed the application in Cloud Foundry to validate the same.
 
-·         Each sale category may have a different schema, so drinks may have size and sandwiches may have addons.
 
-·         The rewards are in the form of points, points are calculated via a series (blue, green yellow) of "made up" strategies that takes into account the category and item price.
 
-·         Average is generated based on the item category and would be calculated for both the item price and the item rewards points.
+### Trade Offs
 
-An example event stream is:
 
-{"id":123, "category": "drink" , "price": 10, "rewards_scheme": "blue" , "name": "latte", "size": "large"}
-{"id":124, "category": "sandwich", "price": 15, "rewards_scheme": "green" , "name": "turkey sub", addons: ["onions", "lettuce"]}
-{"id":125, "category": "retail" , "price": 8.5, "rewards_scheme": "yellow", "name": "snickers bar"}
-{"id":128, "category": "drink" , "price": 1.2, "rewards_scheme": "green" , "name": "coke", "size": "medium"}
+### Assumptions
 
-The outcome may be something like this (For each moving average window):
 
-Category |drink|sandwich|retail
+### Using the application
+I invested time to have the local ( actually I consider this the "test instance" of my microservices or apps) which are built many times for all functional and performance testing usually.
+You dont need anything pre installed in this case. For testing purpose I am using all in memory message broker and mongoDB database
+For this exercise, as mentioned before, I simulated a "production environment" as deploying it on CF as well.
 
-Time|Avg $|Avg Pts
-	
+#### How to access it "in production"
 
-Avg $
-	
+#### How to run it locally
 
-Avg Pts
-	
 
-Avg $
-	
 
-Avg Pts
 
-Pos 1
-	
 
-8.2
-	
 
-2
-	
 
-15
-	
+### Implementation order
+This session here is more a guide for me ( the author ) guide my thoughts and dont forget high level tasks I would like to imply to make production ready.
+To develop this solution, I will take the following steps:
 
-3
-	
-
-8.5
-	
-
-3
-
-Pos 2
-	
-
-8.3
-	
-
-3
-	
-
-15.1
-	
-
-3
-	
-
-8.4
-	
-
-3
-
-Pos 3
-	
-
-8.1
-	
-
-2
-	
-
-15.5
-	
-
-4
-	
-
-8.2
-	
-
-2
-
-The net result of the processing should be a visualization (UI or Console) of a moving average (https://en.wikipedia.org/wiki/Moving_average) of the average item cost by category and average rewards points calculated by category.
-
-The code should be as close to "production ready" code as possible and should make good use of OO design, appropriate patterns and testing/automation.
+1) Create the app structure with maven and basic spring boot app
+2) Build a simple reactive web app with publisher to generate the events similar to described on problem statement
+3) Create a CF environment and deployment pipeline with GitHub Actions
+4) Extend REST API to store data and setup actuator and swagger ui.

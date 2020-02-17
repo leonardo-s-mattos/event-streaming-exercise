@@ -1,0 +1,11 @@
+---
+memory: 1024M
+random-route: false
+path: ./target/exercise-0.0.1-SNAPSHOT.jar
+instances: 1
+routes:
+  - route: leo-exercise-test.cfapps.io
+#health-check-type: http
+
+applications:
+ - name: leo-pivotal-test

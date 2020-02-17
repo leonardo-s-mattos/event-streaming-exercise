@@ -1,0 +1,15 @@
+---
+memory: 1024M
+random-route: false
+path: ./target/petclinic.war
+instances: 1
+routes:
+  - route: leo-exercise.cfapps.io
+
+applications:
+ - name: leo-pivotal-prod-blue
+   # Load balance between 2 instances instead of 1
+   instances: 2
+ - name: leo-pivotal-prod-green
+   # Load balance between 2 instances instead of 1
+   instances: 2
