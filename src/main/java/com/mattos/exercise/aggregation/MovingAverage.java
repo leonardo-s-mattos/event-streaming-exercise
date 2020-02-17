@@ -3,7 +3,7 @@ package com.mattos.exercise.aggregation;
 import com.mattos.exercise.config.AggregationConfig;
 
 import com.mattos.exercise.config.RewardSchemaConfig;
-import com.mattos.exercise.producer.OrderEventProducer;
+import com.mattos.exercise.publisher.NewOrdersEventPublisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ public class MovingAverage<T> implements Subscriber<T> {
 
     @Autowired private AggregationConfig aggregationConfig;
     @Autowired private RewardSchemaConfig rewardSchemeConfig;
-    @Autowired private OrderEventProducer orderEventProducer;
+    @Autowired private NewOrdersEventPublisher newOrdersEventPublisher;
 
     private Subscription subscription;
 
     @PostConstruct
     public void subscribe(){
-        orderEventProducer.orderStream().subscribe();
+        newOrdersEventPublisher.orderStream().subscribe();
     }
 
     @Override

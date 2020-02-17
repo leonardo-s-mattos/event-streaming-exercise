@@ -1,6 +1,6 @@
 package com.mattos.exercise.acturator;
 
-import com.mattos.exercise.producer.OrderEventProducer;
+import com.mattos.exercise.publisher.NewOrdersEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
@@ -13,16 +13,16 @@ import reactor.core.publisher.Mono;
 class ProducerBatteryHealthIndicator implements ReactiveHealthIndicator {
 
 
-   private final OrderEventProducer orderEventProducer;
+   private final NewOrdersEventPublisher newOrdersEventPublisher;
 
     @Autowired
-    public ProducerBatteryHealthIndicator(OrderEventProducer orderEventProducer) {
-        this.orderEventProducer = orderEventProducer;
+    public ProducerBatteryHealthIndicator(NewOrdersEventPublisher newOrdersEventPublisher) {
+        this.newOrdersEventPublisher = newOrdersEventPublisher;
     }
 
     @Override
    public Mono<Health> health() {
-      return orderEventProducer
+      return newOrdersEventPublisher
          .batteryLevel()
          .map(level -> {
             if (level > 40) {

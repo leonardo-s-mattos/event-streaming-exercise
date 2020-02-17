@@ -13,12 +13,15 @@ import reactor.core.scheduler.Schedulers;
 import javax.annotation.PostConstruct;
 
 @Slf4j
-@RequiredArgsConstructor
 @EnableAdminServer
 @SpringBootApplication
 public class ExerciseApplication  {
 
 	private final MeterRegistry meterRegistry;
+
+	public ExerciseApplication(MeterRegistry meterRegistry) {
+		this.meterRegistry = meterRegistry;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ExerciseApplication.class, args);

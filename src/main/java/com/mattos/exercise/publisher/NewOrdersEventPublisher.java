@@ -1,5 +1,7 @@
-package com.mattos.exercise.producer;
+package com.mattos.exercise.publisher;
 
+import com.mattos.exercise.aggregation.MovingAverageCalculator;
+import com.mattos.exercise.aggregation.NewOrdersDatabaseLogger;
 import com.mattos.exercise.domain.Order;
 import com.mattos.exercise.scheduler.MeteredScheduledThreadPoolExecutor;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -18,48 +20,31 @@ import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SubmissionPublisher;
 import java.util.logging.Level;
 
 @Slf4j
 @Service
-public class OrderEventProducer {
+public class NewOrdersEventPublisher extends SubmissionPublisher<String> {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderEventProducer.class);
+    private static final Logger log = LoggerFactory.getLogger(NewOrdersEventPublisher.class);
     private final Random rnd = new Random();
 
     private final MeterRegistry meterRegistry;
 
-    /*
-    private final Observable<String> dataStream =
-            Observable
-                    .range(0, Integer.MAX_VALUE)
-                    .concatMap(ignore -> Observable
-                            .just(1)
-                            .delay(rnd.nextInt(5000), TimeUnit.MILLISECONDS)
-                            .map(ignore2 -> this.probe()))
-                    .publish()
-                    .refCount();
-
-    public Observable<String> orderStream() {
-        return dataStream;
-    }
-
-    private String probe()  {
-        Order generatedOrder = new Order.Builder().withId(String.valueOf(100000 + rnd.nextGaussian())).withCategory("sandwich")
-                .withSale("turkey sub", 16 + rnd.nextGaussian() * 10, "green", null, new String[]{"onions", "lettuce"}).build();
-
-        return Order.toJson(generatedOrder);
-    }*/
-
     private Flux<Order> dataStream;
 
     @Autowired
-    public OrderEventProducer(MeterRegistry meterRegistry) {
+    public NewOrdersEventPublisher(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }
 
     @PostConstruct
     public void init() {
+
+        this.subscribe( new NewOrdersDatabaseLogger());
+        this.subscribe( new MovingAverageCalculator());
+
         ScheduledExecutorService executor =
                 new MeteredScheduledThreadPoolExecutor("order", 3, meterRegistry);
 
@@ -69,12 +54,12 @@ public class OrderEventProducer {
                 .repeat()
                 .concatMap(ignore -> this.probe()
                         .delayElement(randomDelay(1000), eventsScheduler)
-                        .name("order.producer")
+                        .name("order.publisher")
                         .metrics()
-                        .log("moving.average", Level.FINE))
+                        .log("order.publisher.log", Level.FINE))
                 .publish()
                 .refCount();
-        log.info("Order Producer is ready");
+        log.info("New Order Publisher is ready");
     }
 
     public Flux<Order> orderStream() {
@@ -92,12 +77,14 @@ public class OrderEventProducer {
             long delay = randomDelay(100).toMillis();
             try {
                 Thread.sleep(delay);
-                return new Order.Builder().withId(String.valueOf(100000 + rnd.nextGaussian())).withCategory("sandwich")
-                        .withSale("turkey sub", 16 + rnd.nextGaussian() * 10, "green", null, new String[]{"onions", "lettuce"}).build();
+                Order newRandomOrder = new Order.Builder().withId(String.valueOf(100000 * rnd.nextGaussian())).withCategory("sandwich")
+                        .withSale("turkey sub", rnd.nextGaussian() * 1000, "green", null, new String[]{"onions", "lettuce"}).build();
+                this.submit(Order.toJson(newRandomOrder));
+                return newRandomOrder;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } finally {
-                log.info("Order was generated, took {} milliseconds", delay);
+                log.info("New order was generated, took {} milliseconds", delay);
             }
         });
     }
@@ -106,7 +93,7 @@ public class OrderEventProducer {
         return Mono.fromCallable(() -> {
             int level = rnd.nextInt(100);
             if (level <= 2 ) {
-                throw new RuntimeException("Can not connect to the producer");
+                throw new RuntimeException("Can not connect to the publisher");
             }
             return level;
         });

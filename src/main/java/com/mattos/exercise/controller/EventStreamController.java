@@ -1,9 +1,8 @@
 package com.mattos.exercise.controller;
 
 import com.mattos.exercise.domain.Order;
-import com.mattos.exercise.producer.OrderEventProducer;
+import com.mattos.exercise.publisher.NewOrdersEventPublisher;
 import io.micrometer.core.instrument.MeterRegistry;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,15 +18,15 @@ import java.util.logging.Level;
 @RestController
 public class EventStreamController {
    private final MeterRegistry meterRegistry;
-   private final OrderEventProducer orderEventProducer;
+   private final NewOrdersEventPublisher newOrdersEventPublisher;
 
    // Application monitoring
    private AtomicInteger activeStreams;
 
    @Autowired
-   public EventStreamController(MeterRegistry meterRegistry, OrderEventProducer orderEventProducer) {
+   public EventStreamController(MeterRegistry meterRegistry, NewOrdersEventPublisher newOrdersEventPublisher) {
       this.meterRegistry = meterRegistry;
-      this.orderEventProducer = orderEventProducer;
+      this.newOrdersEventPublisher = newOrdersEventPublisher;
    }
 
    @PostConstruct
@@ -37,7 +36,7 @@ public class EventStreamController {
 
    @GetMapping(path = "/order-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
    public Flux<Order> events() {
-      return orderEventProducer.orderStream()
+      return newOrdersEventPublisher.orderStream()
          .doOnSubscribe(subs -> activeStreams.incrementAndGet())
          .name("order.sse-stream")
          .metrics()
