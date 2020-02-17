@@ -1,0 +1,51 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: "Event streaming exercise"
+  boot:
+    admin:
+      context-path: "/admin"
+      client:
+        url: "http://localhost:${management.server.port}/admin"
+
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8090
+  endpoints:
+    web:
+      exposure.include: "*"
+  endpoint:
+    health:
+      show-details: "always"
+      cache:
+        time-to-live: 10s
+
+logging:
+  file: cloud-ready-reactive-app.log
+
+# Information about the application
+info:
+  name: "Moving Average App"
+  mode: "testing"
+  authors: "Leo"
+  service-version: "1.0"
+  features:
+    feature-a: "enabled"
+    feature-b: "disabled"
+
+# To disable Info endpoint
+#management.endpoint.info.enabled: false
+
+# Distributed tracing
+spring.sleuth.sampler.probability: 1.0
+# spring.zipkin.baseUrl: "http://localhost:9411"
+
+rewards.schemes.blue: 5.0
+rewards.schemes.green: 10.0
+rewards.schemes.yellow: 15.0
+
+aggregation:.size: 3

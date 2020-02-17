@@ -12,12 +12,18 @@ To come up with the design of this solution, I used some ground principles. It a
 2) As it was asked for a closest to production as possible, and aiming to deliver high quality user experience, we must case about the system's responsiveness and resiliency ( ability to respond under failure ).
 3) As one of the reactive patterns, I chose the streaming architectural technique, due to the characteristic of low latency and high throughput, achieved using the isolation principle together with the data pipeline.
 4) To make it truly reactive design, I used the SSE for the UI
-5) I chose to use Spring WebFlux + Kafka + MongoDB as base and leverage lots of Spring Cloud features to be "cloud agnostic". 
+5) I chose to use Spring WebFlux + RabbitMQ + MongoDB as base and leverage lots of Spring Cloud features to be "cloud agnostic". 
 6) I also deployed the application in Cloud Foundry to validate the same.
+7) Divided into 3 main components, which communicate via message broker
 
 
 
 ### Trade Offs
+
+For sake of simplicity, I am building the 3 parts of the solution (Generator, Aggregation and UI) as all part of same ExerciseApp.
+But the overall design, with the queues ( message broker ) allows that each component to be deployed as individual component, maintaining the integrity of the design.
+
+Kafka gives a better throughput than RabbitMQ. But to have in memory broker, I coded with RabbitMQ.
 
 
 ### Assumptions
