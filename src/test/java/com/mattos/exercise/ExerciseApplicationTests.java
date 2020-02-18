@@ -8,6 +8,13 @@ class ExerciseApplicationTests {
 
 	@Test
 	void contextLoads() {
+
+
+
+
+
+
 	}
+
 
 }

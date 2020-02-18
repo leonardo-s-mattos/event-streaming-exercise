@@ -1,0 +1,42 @@
+package com.mattos.old.controller;
+
+import com.mattos.old.domain.Order;
+import com.mattos.old.publisher.TemperatureSensor;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+
+import javax.annotation.PostConstruct;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+public class EventStreamController {
+   private final MeterRegistry meterRegistry;
+   private final TemperatureSensor temperatureSensor;
+
+   // Application monitoring
+   private AtomicInteger activeStreams;
+
+   @PostConstruct
+   public void init() {
+      activeStreams = meterRegistry.gauge("sse.streams", new AtomicInteger(0));
+   }
+
+   @GetMapping(path = "/temperature-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+   public Flux<Order> events() {
+      return temperatureSensor.temperatureStream()
+         .doOnSubscribe(subs -> activeStreams.incrementAndGet())
+         .name("temperature.sse-stream")
+         .metrics()
+         .log("sse.temperature", Level.FINE)
+         .doOnCancel(() -> activeStreams.decrementAndGet())
+         .doOnTerminate(() -> activeStreams.decrementAndGet());
+   }
+}

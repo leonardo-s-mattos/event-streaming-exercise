@@ -1,4 +1,4 @@
-package com.mattos.exercise.domain;
+package com.mattos.old.domain;
 
 public enum RewardScheme {
 
@@ -10,11 +10,6 @@ public enum RewardScheme {
 
     private RewardScheme(final Double rewardPercentage) {
         this.rewardPercentage = rewardPercentage;
-    }
-
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
     }
 
     public Double getRewardPercentage() { return rewardPercentage; }
