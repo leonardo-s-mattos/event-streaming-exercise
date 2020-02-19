@@ -14,7 +14,9 @@ To come up with the design of this solution, I used some ground principles. It a
 4) To make it truly reactive design, I used the SSE for the UI
 5) I chose to use Spring WebFlux + Stream + MongoDB as base and leverage lots of Spring Cloud features to be "cloud agnostic". 
 6) I also deployed the application in Cloud Foundry to validate the same.
-7) Divided into 3 main components, which communicate via message broker
+7) Data flow architecture with Cloud Stream - Simple. 
+
+*** Important : I developed with features seeing on Java 10+ ****
 
 
 
