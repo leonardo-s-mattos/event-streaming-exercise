@@ -5,14 +5,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mattos.exercise.domain.accessories.SalesOrderDeserializer;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Document(collection = "orders")
 public class SalesOrder {
 
+    @Id
     protected String id;
+    @Indexed
     protected String category;
     protected Double price;
     @JsonProperty("rewards_scheme")
@@ -49,6 +55,8 @@ public class SalesOrder {
     public String getName() {
         return name;
     }
+
+    public Double getPoints() { return getPrice() * (getRewardScheme().getRewardPercentage()) / 100.0D}
 
     public static <T extends SalesOrder>  T fromJson(String json) throws IOException {
 

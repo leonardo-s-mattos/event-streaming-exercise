@@ -30,12 +30,14 @@ public class SalesOrderController {
 
    @GetMapping(path = "/order-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
    public Flux<String> events() {
-      return salesOrderProvider.temperatureStream()
+      Flux<String> flux = salesOrderProvider.newSalesOrderStream()
          .doOnSubscribe(subs -> activeStreams.incrementAndGet())
          .name("order.sse-stream")
          .metrics()
          .log("sse.order", Level.FINE)
          .doOnCancel(() -> activeStreams.decrementAndGet())
          .doOnTerminate(() -> activeStreams.decrementAndGet());
+
+      return flux;
    }
 }

@@ -34,7 +34,7 @@ public class SalesOrderProvider {
    @PostConstruct
    public void init() {
       ScheduledExecutorService executor =
-         new MeteredScheduledThreadPoolExecutor("temp.sensor", 3, meterRegistry);
+         new MeteredScheduledThreadPoolExecutor("newOrder.probe", 3, meterRegistry);
 
       Scheduler eventsScheduler = Schedulers.fromExecutor(executor);
       dataStream = Flux
@@ -42,15 +42,15 @@ public class SalesOrderProvider {
          .repeat()
          .concatMap(ignore -> this.probe()
             .delayElement(randomDelay(1000), eventsScheduler)
-            .name("temperature.probe")
+            .name("newOrder.probe")
             .metrics()
-            .log("temperature.measurement", Level.FINE))
+            .log("salesOrder.generator", Level.FINE))
          .publish()
          .refCount();
-      log.info("Temperature Sensor is ready");
+      log.info("Sales Order Generator is ready");
    }
 
-   public Flux<String> temperatureStream() {
+   public Flux<String> newSalesOrderStream() {
       return dataStream;
    }
 
