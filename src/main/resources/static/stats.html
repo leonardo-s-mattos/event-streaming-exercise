@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moving Average App - Sales Statistics by Category</title>
+</head>
+<body>
+<div>
+    <table id="statsTable" style="width:100%">
+        <tr>
+            <th>Category</th>
+            <th>Average $</th>
+            <th>Average Pts</th>
+        </tr>
+    </table>
+</div>
+<script type="application/javascript">
+    function addRow(category, averagePrice, averagePoints) {
+        const row = document.createElement("tr");
+        const categoryColumn = document.createElement("td");
+        const salesColumn = document.createElement("td");
+        const pointsColumn = document.createElement("td");
+
+        categoryColumn.innerHTML = category;
+        salesColumn.innerHTML = averagePrice;
+        pointsColumn.innerHTML = averagePoints;
+
+        row.appendChild(categoryColumn);
+        row.appendChild(salesColumn);
+        row.appendChild(pointsColumn);
+
+        document.getElementById("statsTable").appendChild(row);
+    }
+
+    if (!!window.EventSource) {
+        const eventSource = new EventSource("/stats-stream");
+
+        window.onbeforeunload = function(){
+            eventSource.close();
+        };
+
+        eventSource.onopen = function (e) {
+            addMessage('Connection opened');
+        };
+        eventSource.onmessage = function (e) {
+            var event = e.data;
+            addRow(event.);
+        };
+        eventSource.onerror = function (e) {
+            if (e.readyState === EventSource.CONNECTING) {
+                addMessage('Connecting to server');
+            } else if (e.readyState === EventSource.OPEN) {
+                addMessage('Connection opened');
+            } else if (e.readyState === EventSource.CLOSING) {
+                addMessage('Connection closing');
+            } else if (e.readyState === EventSource.CLOSED) {
+                addMessage('Connection closed');
+            }
+        };
+    } else {
+        addMessage('Your browser does not support Server-Sent Events!');
+    }
+</script>
+</body>
+</html>
