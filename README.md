@@ -48,6 +48,8 @@ I deployed it on my Cloud Foundry account. And can be access by :
 1. Log of the generated orders ( https://leo-exercise-dev.cfapps.io/orders.html)
 2. Moving Average stats ( https://leo-exercise-dev.cfapps.io/stats.html)
 
+*** For cost saving ( its a personal CF account ), I usually leave all the applications down. Let me know if this is the case and I will start it up ***
+
 #### How to run it locally
 
 To run locally you have to 
