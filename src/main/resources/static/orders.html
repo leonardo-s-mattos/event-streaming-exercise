@@ -27,7 +27,7 @@
         };
         eventSource.onmessage = function (e) {
             var event = e.data;
-            addMessage('Order: ' + event.value);
+            addMessage('Order: ' + event);
         };
         eventSource.onerror = function (e) {
             if (e.readyState === EventSource.CONNECTING) {

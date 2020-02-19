@@ -1,4 +1,4 @@
-package com.mattos.exercise.movingaverage.service.impl;
+package com.mattos.exercise.movingaverage.service;
 
 import com.mattos.exercise.domain.SalesOrder;
 import com.mattos.exercise.domain.vm.SalesStatisticVM;
@@ -56,13 +56,8 @@ public class OrderStatisticsService implements Subscriber<String> {
 
             dataStream = Flux.just(new SalesStatisticVM(newNotifiedOrder.getCategory(), averagePrice, averageRewards));
 
-            System.out.println("New Order Publisher is ready");
-
-
-
-
         } catch ( IOException e){
-            System.out.println("Problem to parse event data. For now I will ignore this record.");
+            log.error("Problem to parse event data. For now I will ignore this record.");
         } finally {
             subscription.request(1);
         }
@@ -88,7 +83,7 @@ public class OrderStatisticsService implements Subscriber<String> {
         log.info("New order just stored");
     }
 
-    public Flux<String> newStatisticsStream() {
+    public Flux<SalesStatisticVM> newStatisticsStream() {
         return dataStream;
     }
 

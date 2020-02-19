@@ -1,4 +1,4 @@
-package com.mattos.exercise.movingaverage.service.impl;
+package com.mattos.exercise.movingaverage.service;
 
 import com.mattos.exercise.domain.SalesOrder;
 import com.mattos.exercise.movingaverage.repository.SalesRepository;
@@ -14,9 +14,10 @@ import java.io.IOException;
 @Component
 public class NewSalesOrderService implements Subscriber<String> {
 
-    private Subscription subscription;
+
     @Autowired
     private SalesRepository salesRepository;
+    private Subscription subscription;
 
     @Override
     public void onNext(String t) {
@@ -30,6 +31,8 @@ public class NewSalesOrderService implements Subscriber<String> {
 
         } catch (IOException e) {
             log.error("Received an invalid Order and did not persisted on db");
+        } finally {
+            subscription.request(1);
         }
 
     }

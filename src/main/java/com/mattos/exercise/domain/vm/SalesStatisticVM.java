@@ -9,6 +9,7 @@ public class SalesStatisticVM {
 
     private String category;
     private Double averagePrice;
+    private Double averagePoints;
 
     public SalesStatisticVM(String category, Double averagePrice, Double averagePoints) {
         this.category = category;
@@ -28,5 +29,5 @@ public class SalesStatisticVM {
         return averagePoints;
     }
 
-    private Double averagePoints;
+
 }

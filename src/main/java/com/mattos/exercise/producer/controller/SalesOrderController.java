@@ -14,14 +14,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 public class SalesOrderController {
-   private final MeterRegistry meterRegistry;
-   private final SalesOrderProvider salesOrderProvider;
+   private MeterRegistry meterRegistry;
+   private SalesOrderProvider salesOrderProvider;
 
    // Application monitoring
    private AtomicInteger activeStreams;
+
+   public SalesOrderController(MeterRegistry meterRegistry, SalesOrderProvider salesOrderProvider) {
+      this.meterRegistry = meterRegistry;
+      this.salesOrderProvider = salesOrderProvider;
+   }
 
    @PostConstruct
    public void init() {

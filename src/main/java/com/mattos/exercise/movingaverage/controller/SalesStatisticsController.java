@@ -1,8 +1,8 @@
 package com.mattos.exercise.movingaverage.controller;
 
-import com.mattos.exercise.movingaverage.service.impl.OrderStatisticsService;
+import com.mattos.exercise.domain.vm.SalesStatisticVM;
+import com.mattos.exercise.movingaverage.service.OrderStatisticsService;
 import io.micrometer.core.instrument.MeterRegistry;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +14,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 public class SalesStatisticsController {
-   private final MeterRegistry meterRegistry;
-   private final OrderStatisticsService orderStatisticsService;
+   private MeterRegistry meterRegistry;
+   private OrderStatisticsService orderStatisticsService;
 
    // Application monitoring
    private AtomicInteger activeStreams;
+
+   public SalesStatisticsController(MeterRegistry meterRegistry, OrderStatisticsService orderStatisticsService) {
+      this.meterRegistry = meterRegistry;
+      this.orderStatisticsService = orderStatisticsService;
+   }
 
    @PostConstruct
    public void init() {
@@ -29,8 +33,8 @@ public class SalesStatisticsController {
    }
 
    @GetMapping(path = "/stats-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-   public Flux<String> events() {
-      Flux<String> flux = orderStatisticsService.newStatisticsStream()
+   public Flux<SalesStatisticVM> events() {
+      Flux<SalesStatisticVM> flux = orderStatisticsService.newStatisticsStream()
          .doOnSubscribe(subs -> activeStreams.incrementAndGet())
          .name("stats.sse-stream")
          .metrics()

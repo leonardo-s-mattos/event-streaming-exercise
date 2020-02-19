@@ -56,7 +56,7 @@ public class SalesOrder {
         return name;
     }
 
-    public Double getPoints() { return getPrice() * (getRewardScheme().getRewardPercentage()) / 100.0D}
+    public Double getPoints() { return getPrice() * (getRewardScheme().getRewardPercentage()) / 100.0D;}
 
     public static <T extends SalesOrder>  T fromJson(String json) throws IOException {
 
