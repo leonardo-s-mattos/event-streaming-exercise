@@ -18,8 +18,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Level;
 
 /**
- * Service that generates random Sales
- *
+ * Service that generates random Sales and feed a stream
+ * It uses a scheduler to run the "probe" job for generate and feed the stream on certain intervals
+ * Simulate some messages per second
  */
 @Slf4j
 @Service

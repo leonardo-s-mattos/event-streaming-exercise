@@ -13,6 +13,11 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
+/*
+ * Exposes via web service ( Reactive API ) the stream of events ( new orders )
+ * Simple usage of SSE to push the changes to UI..  and with the listener on that side, keep the communication open
+ * and with backpressure
+ */
 @Slf4j
 @RestController
 public class SalesOrderController {

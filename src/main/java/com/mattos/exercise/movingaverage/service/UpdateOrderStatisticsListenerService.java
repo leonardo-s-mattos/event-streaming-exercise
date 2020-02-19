@@ -22,6 +22,10 @@ import java.util.Map;
 /*
  * This is a listener for the new orders and do a simple calculation of the moving average
  * for the configured maximum number of records per category
+ *
+ * For the cache, here is one of the tade offs...  that for production scale it would not work obviously.
+ * For real life and thinking on having multiple instances of this service, a distributed cache service like redis
+ * would be useful.
  */
 @Slf4j
 @Component
