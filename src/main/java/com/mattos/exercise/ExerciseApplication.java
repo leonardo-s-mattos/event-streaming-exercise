@@ -1,6 +1,6 @@
 package com.mattos.exercise;
 
-import com.mattos.old.scheduler.MeteredSchedulersFactory;
+import com.mattos.exercise.producer.scheduler.MeteredSchedulersFactory;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;

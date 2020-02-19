@@ -7,7 +7,7 @@ spring:
     admin:
       context-path: "/admin"
       client:
-        url: "http://localhost:${management.server.port}/admin"
+        url: "https://leo-exercise-dev.cfapps.io:${management.server.port}/admin"
 
 server:
   port: 8080
@@ -25,7 +25,7 @@ management:
         time-to-live: 10s
 
 logging:
-  file: cloud-ready-reactive-app.log
+  file: moving-average-app.log
 
 # Information about the application
 info:
@@ -48,4 +48,22 @@ rewards.schemes.blue: 5.0
 rewards.schemes.green: 10.0
 rewards.schemes.yellow: 15.0
 
-aggregation:.size: 3
+aggregation.maximumSize: 3
+
+orderstream.url: https://leo-exercise-dev.cfapps.io/
+
+---
+
+spring:
+  profiles: local
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: "Event streaming exercise"
+  boot:
+    admin:
+      context-path: "/admin"
+      client:
+        url: "http://localhost:${management.server.port}/admin"
+
+orderstream.url: http://localhost:8080

@@ -54,16 +54,6 @@ public class SalesOrderProvider {
       return dataStream;
    }
 
-   public Mono<Integer> batteryLevel() {
-      return Mono.fromCallable(() -> {
-         int level = rnd.nextInt(100);
-         if (level <= 2 ) {
-            throw new RuntimeException("Can not connect to the sensor");
-         }
-         return level;
-      });
-   }
-
    // --- Supporting methods
 
    private Duration randomDelay(int maxMillis) {
