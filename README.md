@@ -15,6 +15,7 @@ To come up with the design of this solution, I used some ground principles. It a
 5) I chose to use Spring WebFlux + Stream + MongoDB as base and leverage lots of Spring Cloud features to be "cloud agnostic". 
 6) I also deployed the application in Cloud Foundry to validate the same.
 7) Data flow architecture with Cloud Stream - Simple. 
+8) I have created a simple CD pipeline with GitHub Actions. You can see the pipeline on GitHub (.github/workflows/deplo-dev-pipeline.yml)
 
 *** Important : I developed with features seeing on Java 10+ ****
 
