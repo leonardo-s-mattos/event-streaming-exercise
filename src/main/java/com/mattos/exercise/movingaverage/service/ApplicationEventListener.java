@@ -24,7 +24,11 @@ public class ApplicationEventListener {
 
     private String url;
     @Autowired
-    private UpdateOrderStatisticsListenerService updateOrderStatisticsListenerService;
+    private UpdateDrinkOrderStatisticsListenerService updateDrinkOrderStatisticsListenerService;
+    @Autowired
+    private UpdateRetailOrderStatisticsListenerService updateRetailOrderStatisticsListenerService;
+    @Autowired
+    private UpdateSandwichOrderStatisticsListenerService updateSandwichOrderStatisticsListenerService;
     @Autowired
     private NewSalesOrderListenerService newSalesOrderListenerService;
 
@@ -37,7 +41,18 @@ public class ApplicationEventListener {
 
         webClient.get().uri("/order-stream").accept(MediaType.TEXT_EVENT_STREAM).retrieve()
                 .bodyToFlux(String.class).log()
-                .subscribe(updateOrderStatisticsListenerService);
+                .filter(v->v.contains("drink"))
+                .subscribe(updateDrinkOrderStatisticsListenerService);
+
+        webClient.get().uri("/order-stream").accept(MediaType.TEXT_EVENT_STREAM).retrieve()
+                .bodyToFlux(String.class).log()
+                .filter(v->v.contains("retail"))
+                .subscribe(updateRetailOrderStatisticsListenerService);
+
+        webClient.get().uri("/order-stream").accept(MediaType.TEXT_EVENT_STREAM).retrieve()
+                .bodyToFlux(String.class).log()
+                .filter(v->v.contains("sandwich"))
+                .subscribe(updateSandwichOrderStatisticsListenerService);
     }
 
     public void setUrl(String url) {

@@ -6,34 +6,63 @@
 </head>
 <body>
 <div>
-    <table id="statsTable" style="width:100%">
+    <table id="statsTable" style="width:70%">
         <tr>
-            <th>Category</th>
-            <th>Average $</th>
-            <th>Average Pts</th>
+            <th colspan="3">Category</th>
+
+        </tr>
+        <tr>
+            <td>Drink</td>
+            <td>Retail</td>
+            <td>Sandwich</td>
+        </tr>
+        <tr>
+            <td>
+                <table id="drinkStatsTable">
+                    <tr>
+                        <th>Average $</th>
+                        <th>Average Pts</th>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="retailStatsTable">
+                    <tr>
+                        <th>Average $</th>
+                        <th>Average Pts</th>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="sandwichStatsTable">
+                    <tr>
+                        <th>Average $</th>
+                        <th>Average Pts</th>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
+
 </div>
 <script type="application/javascript">
-    function addRow(category, averagePrice, averagePoints) {
+    function addRow(tableName, averagePrice, averagePoints) {
         const row = document.createElement("tr");
-        const categoryColumn = document.createElement("td");
+
         const salesColumn = document.createElement("td");
         const pointsColumn = document.createElement("td");
 
-        categoryColumn.innerHTML = category;
         salesColumn.innerHTML = averagePrice;
         pointsColumn.innerHTML = averagePoints;
 
-        row.appendChild(categoryColumn);
         row.appendChild(salesColumn);
         row.appendChild(pointsColumn);
 
-        document.getElementById("statsTable").appendChild(row);
+        document.getElementById(tableName).appendChild(row);
     }
 
     if (!!window.EventSource) {
-        const eventSource = new EventSource("/stats-stream");
+        const eventSource = new EventSource("/drink-stats-stream");
 
         window.onbeforeunload = function(){
 
@@ -44,9 +73,35 @@
         };
         eventSource.onmessage = function (e) {
             var event = JSON.parse(e.data);
-            addRow(event.category, event.averagePrice, event.averagePoints);
+            addRow("drinkStatsTable", event.averagePrice, event.averagePoints);
         };
         eventSource.onerror = function (e) {
+
+        };
+
+        const retailEventSource = new EventSource("/retail-stats-stream");
+
+        retailEventSource.onopen = function (e) {
+
+        };
+        retailEventSource.onmessage = function (e) {
+            var event = JSON.parse(e.data);
+            addRow("retailStatsTable", event.averagePrice, event.averagePoints);
+        };
+        retailEventSource.onerror = function (e) {
+
+        };
+
+        const sandwichEventSource = new EventSource("/sandwich-stats-stream");
+
+        sandwichEventSource.onopen = function (e) {
+
+        };
+        sandwichEventSource.onmessage = function (e) {
+            var event = JSON.parse(e.data);
+            addRow("sandwichStatsTable", event.averagePrice, event.averagePoints);
+        };
+        sandwichEventSource.onerror = function (e) {
 
         };
     }

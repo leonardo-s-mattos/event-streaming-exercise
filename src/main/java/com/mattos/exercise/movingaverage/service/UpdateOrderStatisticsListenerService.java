@@ -28,15 +28,17 @@ import java.util.Map;
  * would be useful.
  */
 @Slf4j
-@Component
-public class UpdateOrderStatisticsListenerService implements Subscriber<String> {
+public abstract class UpdateOrderStatisticsListenerService implements Subscriber<String> {
 
-    @Autowired private AggregationConfig aggregationConfig;
+    @Autowired protected AggregationConfig aggregationConfig;
 
-    private Subscription subscription;
-    private Map<String, List<SalesOrder>> cacheForTheOrders;
+    protected Subscription subscription;
 
-    private Flux<SalesStatisticVM> dataStream;
+    protected List<SalesOrder> last3CachedOrders;
+
+    protected Flux<SalesStatisticVM> dataStream;
+
+    public abstract String whichCategoryAmI();
 
     @Override
     public void onNext(String json) {
@@ -44,28 +46,25 @@ public class UpdateOrderStatisticsListenerService implements Subscriber<String> 
             SalesOrder newNotifiedOrder = SalesOrder.fromJson(json);
 
             // grab the current list from cache for given category
-            List<SalesOrder> last3ChachedOrders = this.cacheForTheOrders.get(newNotifiedOrder.getCategory());
-            if (last3ChachedOrders == null) {
-                last3ChachedOrders = new ArrayList<>();
+
+            if (last3CachedOrders == null) {
+                last3CachedOrders = new ArrayList<>();
             }
 
-            if (last3ChachedOrders.size() == aggregationConfig.getMaximumSize()) {
-                last3ChachedOrders.remove(0);
+            if (last3CachedOrders.size() == aggregationConfig.getMaximumSize()) {
+                last3CachedOrders.remove(0);
             }
 
-            last3ChachedOrders.add(newNotifiedOrder);
-
-            // Return the modified list to cache
-            this.cacheForTheOrders.put(newNotifiedOrder.getCategory(),last3ChachedOrders);
+            last3CachedOrders.add(newNotifiedOrder);
 
 
             // now doing the calculation
-            Double averagePrice = Precision.round(last3ChachedOrders
+            Double averagePrice = Precision.round(last3CachedOrders
                     .stream()
                     .mapToDouble(v -> v.getPrice())
                     .average().orElse(0D),2);
 
-            Double averageRewards = Precision.round(last3ChachedOrders
+            Double averageRewards = Precision.round(last3CachedOrders
                     .stream()
                     .mapToDouble(v -> v.getPoints())
                     .average().orElse(0D),2);
@@ -87,7 +86,6 @@ public class UpdateOrderStatisticsListenerService implements Subscriber<String> 
     @Override
     public void onSubscribe(Subscription subscription) {
         this.subscription = subscription;
-        cacheForTheOrders = new HashMap<>();
         subscription.request(1);
     }
     @Override
