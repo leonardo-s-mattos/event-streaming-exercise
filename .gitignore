@@ -222,3 +222,4 @@ target/test-classes/com/mattos/exercise/utils/MockClientResponse$1.class
 target/test-classes/com/mattos/exercise/utils/MockClientResponse$DefaultHeaders.class
 target/test-classes/com/mattos/exercise/utils/MockClientResponse.class
 target/test-classes/com/mattos/exercise/utils/StubDataRepository.class
+.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_9_10_3.xml
